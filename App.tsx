@@ -1,10 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React from 'react';
 import type {PropsWithChildren} from 'react';
 import {
@@ -14,118 +7,98 @@ import {
   Text,
   useColorScheme,
   View,
+  TextInput, Button
 } from 'react-native';
+
 
 import {
   Colors,
   DebugInstructions,
-  Header,
+//   Header,
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+import { Header } from '@rneui/themed';
+import LinearGradient from 'react-native-linear-gradient';
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { Content } from './components/content.tsx'
+
 
 function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+    const isDarkMode = useColorScheme() === 'dark';
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  /*
-   * To keep the template simple and small we're adding padding to prevent view
-   * from rendering under the System UI.
-   * For bigger apps the reccomendation is to use `react-native-safe-area-context`:
-   * https://github.com/AppAndFlow/react-native-safe-area-context
-   *
-   * You can read more about it here:
-   * https://github.com/react-native-community/discussions-and-proposals/discussions/827
-   */
-  const safePadding = '5%';
-
+      const backgroundStyle = {
+        backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+      };
   return (
-    <View style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        style={backgroundStyle}>
-        <View style={{paddingRight: safePadding}}>
-          <Header/>
-        </View>
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-            paddingHorizontal: safePadding,
-            paddingBottom: safePadding,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </View>
+   <SafeAreaProvider>
+          <View style={styles.container}>
+            <StatusBar
+              barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+              backgroundColor={backgroundStyle.backgroundColor}
+            />
+            {/* 头部区域 */}
+            <View style={styles.header}>
+              <Text style={styles.headerText}>头部标题</Text>
+            </View>
+
+            {/* 内容区域 */}
+            <View style={styles.content}>
+                <Content/>
+            </View>
+
+            {/* 底部区域 */}
+            <View style={styles.footer}>
+              <Button title="记账" />
+              <Button title="分析" />
+              <TextInput
+                style={styles.input}
+                placeholder="请输入内容"
+              />
+              <Button title="提交" onPress={() => alert('提交按钮被点击')} />
+            </View>
+          </View>
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
+  container: {
+      flex: 1,
+    },
+    header: {
+      padding: 20,
+      backgroundColor: '#6200ee',
+      alignItems: 'center',
+    },
+    headerText: {
+      color: '#fff',
+      fontSize: 20,
+    },
+    content: {
+      flex: 1, // 占据剩余空间
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#f0f0f0',
+    },
+    footer: {
+      flexDirection: 'row', // 水平排列
+      alignItems: 'center',
+      padding: 10,
+      backgroundColor: '#fff',
+      borderTopWidth: 1,
+      borderTopColor: '#ccc',
+    },
+    input: {
+      flex: 1, // 输入框占据剩余空间
+      borderColor: '#ccc',
+      borderWidth: 1,
+      borderRadius: 5,
+      padding: 10,
+      marginRight: 10,
+    },
 });
 
 export default App;
