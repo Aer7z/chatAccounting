@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState} from 'react';
 import type {PropsWithChildren} from 'react';
 import {
   ScrollView,
@@ -7,7 +7,8 @@ import {
   Text,
   useColorScheme,
   View,
-  TextInput, Button
+  TextInput, Button,
+  TouchableOpacity
 } from 'react-native';
 
 
@@ -23,11 +24,12 @@ import { Header } from '@rneui/themed';
 import LinearGradient from 'react-native-linear-gradient';
 
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { Content } from './components/content.tsx'
+import { Content } from './components/index.ts'
 
 
 function App(): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
+    const [inputValue, setInputValue] = useState('');
 
       const backgroundStyle = {
         backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
@@ -49,15 +51,29 @@ function App(): React.JSX.Element {
                 <Content/>
             </View>
 
+
             {/* 底部区域 */}
             <View style={styles.footer}>
-              <Button title="记账" />
-              <Button title="分析" />
-              <TextInput
-                style={styles.input}
-                placeholder="请输入内容"
-              />
-              <Button title="提交" onPress={() => alert('提交按钮被点击')} />
+                <View style={styles.footerInput}>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="请输入内容"
+                      value={inputValue} // 绑定输入值
+                      onChangeText={setInputValue} // 更新输入值
+                    />
+                  <TouchableOpacity style={styles.footerInputButton} onPress={() => alert(`提交的内容: ${inputValue}`)}>
+                    <Text style={styles.buttonText}>提交</Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.footerSelect}>
+                  <TouchableOpacity style={styles.footerButton} onPress={() => alert('记账按钮被点击')}>
+                    <Text style={styles.buttonText}>记账</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.footerButton} onPress={() => alert('分析按钮被点击')}>
+                    <Text style={styles.buttonText}>分析</Text>
+                  </TouchableOpacity>
+                </View>
+
             </View>
           </View>
     </SafeAreaProvider>
@@ -70,7 +86,8 @@ const styles = StyleSheet.create({
     },
     header: {
       padding: 20,
-      backgroundColor: '#6200ee',
+      paddingTop: 25,
+      backgroundColor: '#ADD8E6',
       alignItems: 'center',
     },
     headerText: {
@@ -84,12 +101,43 @@ const styles = StyleSheet.create({
       backgroundColor: '#f0f0f0',
     },
     footer: {
-      flexDirection: 'row', // 水平排列
       alignItems: 'center',
       padding: 10,
+      paddingBottom: 20,
       backgroundColor: '#fff',
       borderTopWidth: 1,
       borderTopColor: '#ccc',
+    },
+    footerInput:{
+        flex:0,
+        flexDirection: 'row',
+        margin:10
+    },
+    footerSelect:{
+        flexDirection: 'row',
+        margin:10
+    },
+      footerButton: {
+        width: '40%', // 设置按钮宽度为屏幕宽度的40%
+        padding: 10, // 内边距
+        backgroundColor: '#ADD8E6', // 按钮背景色
+        alignItems: 'center', // 内容居中
+        borderRadius: 5, // 圆角
+        marginLeft:5,
+        marginRight:5
+      },
+        footerInputButton: {
+          width: '20%', // 设置按钮宽度为屏幕宽度的40%
+          padding: 10, // 内边距
+          backgroundColor: '#ADD8E6', // 按钮背景色
+          alignItems: 'center', // 内容居中
+          borderRadius: 5, // 圆角
+          marginLeft:5,
+          marginRight:5
+        },
+    buttonText: {
+      color: '#fff', // 字体颜色
+      textAlign: 'center', // 文字居中
     },
     input: {
       flex: 1, // 输入框占据剩余空间

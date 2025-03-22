@@ -17,6 +17,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import { ChatBox } from '../ChatBox/index.ts'
 
 const safePadding = '5%';
 
@@ -60,12 +61,8 @@ const Content = ()=>{
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
     };
     return (
-     <ScrollView
+     <View
       style={backgroundStyle}>
-      <View style={{paddingRight: safePadding}}>
-
-      这里是标头
-      </View>
       <View
         style={{
           backgroundColor: isDarkMode ? Colors.black : Colors.white,
@@ -77,8 +74,9 @@ const Content = ()=>{
           screen and then come back to see your edits.
         </Section>
       </View>
+      <ChatBox/>
 
-    </ScrollView>
+    </View>
     )
 }
 
