@@ -62,17 +62,21 @@ export const insertBillDetail = (database, billDetail) => {
 };
 
        // 读取数据
-export  const getBillDetails = (database) => {
-    const bills = [];
-    database.transaction(tx => {
-        tx.executeSql(querySQL, [], (tx, results) => {
-            for (let i = 0; i < results.rows.length; i++) {
-                bills.push(results.rows.item(i));
-            }
-            console.log('读取成功：',bills); // 输出账单记录
+export const getBillDetails = (database) => {
+    return new Promise((resolve, reject) => {
+        const bills = [];
+        database.transaction(tx => {
+            tx.executeSql(querySQL, [], (tx, results) => {
+                for (let i = 0; i < results.rows.length; i++) {
+                    bills.push(results.rows.item(i));
+                }
+//                 console.log('读取成功：', bills); // 输出账单记录
+                resolve(bills); // 返回结果
+            }, (error) => {
+                reject(error); // 处理错误
+            });
         });
     });
-    return bills;
 };
 
 

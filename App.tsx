@@ -41,12 +41,7 @@ function App(): React.JSX.Element {
     const backgroundStyle = {
         backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
     };
-    const database = SQLite.openDatabase({ name: 'chatAccounting.db', location: 'default' },    () => {
-                                                                                                    console.log('数据库打开成功')
-                                                                                                },
-                                                                                                (error) => {
-                                                                                                    console.error('打开数据库失败:', error)
-                                                                                                });
+    const database = SQLite.openDatabase({ name: 'chatAccounting.db', location: 'default' });
     // 存储一批数据
     useEffect(() => {
 //         deleteAllRecords(database);

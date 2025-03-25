@@ -21,7 +21,7 @@ import {
 import { BillDetail } from '../../interface';
 import {  Section } from '../index.ts';
 import { userInput } from '../../AccountingData/userInput.ts';
-import { getDate, getWeekday, analysisBill} from '../../utils/index.ts';
+import { getDate, getWeekday, analysisBill, queryAndSetBills} from '../../utils/index.ts';
 import { insertBillDetail, getBillDetails} from '../../utils/SQL/index.ts';
 
 const safePadding = '5%';
@@ -42,11 +42,9 @@ const ChatBox = ({database}) => {
     const [bills,setBills] = useState([]);
     const [inputValue, setInputValue] = useState('');
 
-    useEffect(()=>{
-        console.log('开始读取');
-        const queryBills = getBillDetails(database);
-        console.log('读取成功',queryBills);
-    },[]);
+    useEffect(() => {
+        queryAndSetBills(database,setBills);
+    }, [database]);
 
 // 午饭花了20
 
