@@ -1,21 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet} from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { queryAndSetBills } from '../../utils/index.ts';
 
 const BillLineChart = ({ database }) => {
     const [bills, setBills] = useState([]);
     const [chartData, setChartData] = useState({
-        labels: ['Default Label 1', 'Default Label 2'], // 默认标签
-        data: [0, 0], // 默认数据
+        labels: ['Default Label 1', 'Default Label 2'],
+        data: [0, 0],
     });
     const [totalIncome, setTotalIncome] = useState(0);
     const [totalExpense, setTotalExpense] = useState(0);
     const [averageIncome, setAverageIncome] = useState(0);
     const [averageExpense, setAverageExpense] = useState(0);
+    const [sortOrder, setSortOrder] = useState('asc'); // 默认升序
+    const flatListRef = useRef(null); // 用于引用 FlatList
+
+    const weekDays = {
+        Sunday: '星期日',
+        Monday: '星期一',
+        Tuesday: '星期二',
+        Wednesday: '星期三',
+        Thursday: '星期四',
+        Friday: '星期五',
+        Saturday: '星期六',
+    };
 
     useEffect(() => {
-        console.log('>>>analysis')
         queryAndSetBills(database, setBills);
     }, [database]);
 
@@ -31,9 +42,8 @@ const BillLineChart = ({ database }) => {
             }, {});
             const labels = Object.keys(groupedData);
             const data = Object.values(groupedData);
-            setChartData({ labels, data }); // 更新图表数据
+            setChartData({ labels, data });
 
-            // 计算总收入和支出
             const totalIncome = bills.reduce((acc, bill) => {
                 return bill.accountingType === 'income' ? acc + bill.totalPrice : acc;
             }, 0);
@@ -41,14 +51,41 @@ const BillLineChart = ({ database }) => {
                 return bill.accountingType === 'expense' ? acc + bill.totalPrice : acc;
             }, 0);
 
-            // 计算日均收入和支出
             setTotalIncome(totalIncome);
             setTotalExpense(totalExpense);
             setAverageIncome(totalIncome / labels.length);
             setAverageExpense(totalExpense / labels.length);
-            console.log('重新渲染',{ labels, data })
         }
     }, [bills]);
+
+    useEffect(() => {
+        // 当组件挂载时，滑动到 FlatList 的底部
+        flatListRef.current?.scrollToEnd({ animated: true });
+    }, [bills]); // 每次 bills 更新时执行
+
+    const toggleSortOrder = () => {
+        setSortOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
+    };
+
+    const sortedBills = [...bills].sort((a, b) => {
+        return sortOrder === 'asc'
+            ? new Date(a.recordDay) - new Date(b.recordDay)
+            : new Date(b.recordDay) - new Date(a.recordDay);
+    });
+
+    const renderItem = ({ item }) => (
+        <View style={styles.billItem}>
+            <Text style={styles.billText}>
+                {item.recordDay} {weekDays[item.recordWeekDay]}
+            </Text>
+            <Text style={[styles.billText, item.accountingType === 'expense' ? styles.expense : styles.income]}>
+                {item.accountingType === 'expense' ? '支出' : '收入'}: {item.totalPrice.toFixed(2)}
+            </Text>
+            <Text style={styles.billText}>
+                {item.content}
+            </Text>
+        </View>
+    );
 
     return (
         <View style={styles.AnalysisContainer}>
@@ -65,13 +102,11 @@ const BillLineChart = ({ database }) => {
             <LineChart
                 data={{
                     labels: chartData.labels,
-                    datasets: [
-                        {
-                            data: chartData.data,
-                        },
-                    ],
+                    datasets: [{
+                        data: chartData.data,
+                    }],
                 }}
-                width={380} // 从父组件获取宽度
+                width={380}
                 height={180}
                 yAxisLabel=""
                 withDots={true}
@@ -81,7 +116,7 @@ const BillLineChart = ({ database }) => {
                     backgroundGradientFrom: '#ffffff',
                     backgroundGradientTo: '#ffffff',
                     decimalPlaces: 2,
-                    color: (opacity = 1) => `rgba(0, 191, 255,  ${opacity})`, // 浅绿色
+                    color: (opacity = 1) => `rgba(0, 191, 255, ${opacity})`,
                     labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
                     style: {
                         borderRadius: 16,
@@ -96,6 +131,16 @@ const BillLineChart = ({ database }) => {
                     borderRadius: 16,
                 }}
             />
+            <TouchableOpacity style={styles.sortButton} onPress={toggleSortOrder}>
+                <Text style={styles.buttonText}>{`点击切换排序到：${sortOrder === 'asc' ? '降序' : '升序'}`}</Text>
+            </TouchableOpacity>
+            <FlatList
+                ref={flatListRef} // 设置 FlatList 的引用
+                data={sortedBills}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id.toString()} // 假设每个账单都有唯一的 id
+                style={styles.billList}
+            />
         </View>
     );
 };
@@ -105,9 +150,6 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 10,
         backgroundColor: '#fff',
-    },
-    container: {
-        padding: 16,
     },
     summaryContainer: {
         marginTop: 5,
@@ -124,12 +166,35 @@ const styles = StyleSheet.create({
         marginVertical: 4,
     },
     income: {
-        color: 'red', // 收入为红色
+        color: 'red',
     },
     expense: {
-        color: 'green', // 支出为绿色
+        color: 'green',
+    },
+    billItem: {
+        padding: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+    },
+    billText: {
+        fontSize: 14,
+    },
+    billList: {
+        marginTop: 20,
+    },
+    sortButton: {
+        width: '98%',
+        padding: 10,
+        backgroundColor: '#ADD8E6',
+        alignItems: 'center',
+        borderRadius: 5,
+        marginLeft: 5,
+        marginRight: 5,
+    },
+    buttonText: {
+        color: '#fff',
+        textAlign: 'center',
     },
 });
-
 
 export default BillLineChart;

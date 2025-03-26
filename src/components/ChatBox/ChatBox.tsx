@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState,useEffect, useRef } from 'react';
 import uuid from 'react-native-uuid';
 import {
   ScrollView,
@@ -35,21 +35,27 @@ const weekDays = {
     Saturday: '星期六',
 };
 
-const ChatBox = ({database}) => {
+const ChatBox = ({database,currentTitle}) => {
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const [bill,setBill] = useState({});
     const [bills,setBills] = useState([]);
     const [inputValue, setInputValue] = useState('');
+    const flatListRef = useRef(null); // 用于引用 FlatList
 
     useEffect(() => {
-        queryAndSetBills(database,setBills);
-    }, [database]);
+        queryAndSetBills(database,setBills,setMessages);
+    }, []);
+    useEffect(() => {
+        // 当组件挂载时，滑动到 FlatList 的底部
+        flatListRef.current?.scrollToEnd({ animated: true });
+    }, [messages]); // 每次 messages 更新时执行
+
 
 // 午饭花了20
 
   const recodeBill = (billNeedToRecord:BillDetail) => {
-      setBills((preBills) => [...preBills,billNeedToRecord]);
+      setBills((preBills) => [billNeedToRecord,...preBills]);
   };
 
   const handleSend = () => {
@@ -57,13 +63,26 @@ const ChatBox = ({database}) => {
         const userMessage = { id: uuid.v4(), text: message, sender: 'user' };
         setMessages((prevMessages) => [...prevMessages, userMessage]);
         const bill = analysisBill(message);
+        insertBillDetail(database,bill);
         recodeBill(bill);
         // 记录账单
-        const billMessage = { id: uuid.v4(), text: `您说的是: ${message}`,bill: bill, sender: 'system' };
+        const billMessage = { id: uuid.v4(), text: `您说的是: ${message}`, bill: bill, sender: 'system' };
         setMessages((prevMessages) => [...prevMessages, billMessage]);
         setMessage(''); // 清空输入框
     }
   };
+  const productMessage = (_message,_setMessages) => {
+      if (_message.trim()) {
+          const userMessage = { id: uuid.v4(), text: _message, sender: 'user' };
+          _setMessages((prevMessages) => [...prevMessages, userMessage]);
+          const bill = analysisBill(_message);
+          recodeBill(bill);
+          // 记录账单
+          const billMessage = { id: uuid.v4(), text: `您说的是: ${_message}`, bill: bill, sender: 'system' };
+          _setMessages((prevMessages) => [...prevMessages, billMessage]);
+      }
+        console.log('...执行')
+  }
 
   const renderBill = ({ item }) => {
         if(item.sender === 'user'){
@@ -101,23 +120,23 @@ const ChatBox = ({database}) => {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
     };
 
-
   useEffect(()=>{
-      userInput.forEach((singleMessage)=>{
-          const userMessage = { id: uuid.v4(), text: singleMessage, sender: 'user' };
-          setMessages((prevMessages) => [...prevMessages, userMessage]);
-          const bill = analysisBill(singleMessage);
-          recodeBill(bill);
-          // 记录账单
-          const billMessage = { id: uuid.v4(), text: `您说的是: ${singleMessage}`,bill: bill, sender: 'system' };
-          setMessages((prevMessages) => [...prevMessages, billMessage]);
-      });
+//       userInput.forEach((singleMessage)=>{
+//           const userMessage = { id: uuid.v4(), text: singleMessage, sender: 'user' };
+//           setMessages((prevMessages) => [...prevMessages, userMessage]);
+//           const bill = analysisBill(singleMessage);
+//           recodeBill(bill);
+//           insertBillDetail(database,bill)
+//           // 记录账单
+//           const billMessage = { id: uuid.v4(), text: `您说的是: ${singleMessage}`,bill: bill, sender: 'system' };
+//           setMessages((prevMessages) => [...prevMessages, billMessage]);
+//       });
   },[]);
-//   console.log('bills',bills);
-//   bills.forEach((item) => { insertBillDetail(database,item);} );
+
   return (
     <View style={styles.CheckBoxContainer}>
         <FlatList
+            ref={flatListRef} // 设置 FlatList 的引用
             data={messages}
             renderItem={renderMessage}
             keyExtractor={(item) => item.id.toString()}

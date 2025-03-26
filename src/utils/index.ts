@@ -80,20 +80,6 @@ export const analysisBill = (message: string) => {
         recordWeekDay: getWeekday(new Date()),
         accountingType: '',
     }
-    // 匹配支出账单
-    const expenseBillMatch = message.match(/(.+)(花了|吃了|用了)(\d+)/);
-    if (expenseBillMatch) {
-        resultBill.content = expenseBillMatch[1].trim();
-        resultBill.totalPrice = parseFloat(expenseBillMatch[3]);
-        resultBill.accountingType = 'expense';
-    }
-    // 匹配收入账单
-    const incomeBillMatch = message.match(/(.+)(发了|给了)(\d+)/);
-    if (incomeBillMatch) {
-        resultBill.content = incomeBillMatch[1].trim();
-        resultBill.totalPrice = parseFloat(incomeBillMatch[3]);
-        resultBill.accountingType = 'income';
-    }
     // 匹配日期关键词
     for (const keyword in dateOffsets) {
         if (message.includes(keyword)) {
@@ -109,16 +95,55 @@ export const analysisBill = (message: string) => {
             break; // 找到第一个匹配的时间关键词后退出循环
         }
     }
+
+    // 去掉日期和时间关键词
+    for (const keyword in dateOffsets) {
+        message = message.replace(new RegExp(keyword, 'g'), ''); // 移除日期关键词
+    }
+    for (const keyword in fixHour) {
+        message = message.replace(new RegExp(keyword, 'g'), ''); // 移除时间关键词
+    }
+    // 匹配支出账单
+    const expenseBillMatch = message.match(/(.+)(花了|吃了|用了)(\d+)/);
+    if (expenseBillMatch) {
+        resultBill.content = expenseBillMatch[1].trim();
+        resultBill.totalPrice = parseFloat(expenseBillMatch[3]);
+        resultBill.accountingType = 'expense';
+    }
+    // 匹配收入账单
+    const incomeBillMatch = message.match(/(.+)(发了|给了)(\d+)/);
+    if (incomeBillMatch) {
+        resultBill.content = incomeBillMatch[1].trim();
+        resultBill.totalPrice = parseFloat(incomeBillMatch[3]);
+        resultBill.accountingType = 'income';
+    }
     return resultBill;
 };
 
+  const productMessage = (_message,_setMessages) => {
+      if (_message.trim()) {
+          const userMessage = { id: uuid.v4(), text: _message, sender: 'user' };
+          _setMessages((prevMessages) => [...prevMessages, userMessage]);
+          const bill = analysisBill(_message);
+          // 记录账单
+          const billMessage = { id: uuid.v4(), text: `您说的是: ${_message}`, bill: bill, sender: 'system' };
+          _setMessages((prevMessages) => [...prevMessages, billMessage]);
+      }
+        console.log('...执行')
+  }
 
-export const queryAndSetBills = (_database, setMethod) => {
+
+export const queryAndSetBills = (_database, setBills, setMessages) => {
     console.log('开始读取');
     getBillDetails(_database)
         .then(queryBills => {
             console.log('读取成功', queryBills);
-            setMethod(queryBills); // 更新状态
+            setBills(queryBills); // 更新状态
+            if(setMessages){
+                queryBills.forEach((item)=>{
+                    productMessage(item.description, setMessages)
+                })
+            }
         })
         .catch(error => {
             console.error('读取失败', error);

@@ -70,7 +70,7 @@ function App(): React.JSX.Element {
             <View style={styles.content}>
                  <View
                   style={backgroundStyle}>
-                  {currentTitle === '记账' ? (<ChatBox database={database}/>) : (<Analysis database={database}/>)}
+                  {currentTitle === '记账' ? (<ChatBox database={database} />) : (<Analysis database={database}/>)}
                 </View>
             </View>
 

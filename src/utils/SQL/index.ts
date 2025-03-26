@@ -44,7 +44,7 @@ export const createBillTable = (database)=>{
 
 
 export const insertBillDetail = (database, billDetail) => {
-//     console.log('账单如下: ', billDetail);
+    console.log('插入账单如下: ', billDetail);
     const { description, content, totalPrice, recordDay, recordHourMinSec, recordWeekDay, accountingType } = billDetail;
 
     database.transaction(tx => {
@@ -70,7 +70,9 @@ export const getBillDetails = (database) => {
                 for (let i = 0; i < results.rows.length; i++) {
                     bills.push(results.rows.item(i));
                 }
-//                 console.log('读取成功：', bills); // 输出账单记录
+                // 根据 recordDay 升序排序
+                bills.sort((a, b) => new Date(a.recordDay) - new Date(b.recordDay));
+                // console.log('读取成功：', bills); // 输出账单记录
                 resolve(bills); // 返回结果
             }, (error) => {
                 reject(error); // 处理错误
