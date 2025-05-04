@@ -1,3 +1,3 @@
 import Analysis from './Analysis.tsx';
 
-export { Analysis };
+export {Analysis};
