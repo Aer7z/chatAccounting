@@ -52,6 +52,7 @@ export function getWeekdayForShow(date) {
     return weekdays[date.getDay()];
 }
 
+
 // 获得存储数据
 export function getWeekday(date) {
     return date.getDay();
@@ -128,11 +129,23 @@ export const getCategory = (content:string) => {
     let category = 'unknown'
     const cateringContainsContent = ['早饭','午饭','晚饭','地三鲜','早餐','午餐','晚餐','吃饭','麦当劳']
     const dayContainsContent = ['洗车','按摩']
+    const clothesContainsContent = ['衣服','裤子','外套','袜子','鞋子','卫衣','裙子','短袖','长袖']
+    const fruitsContainsContent = ['苹果','水果','橙子','橘子','梨','樱桃','草莓','西瓜','哈密瓜']
+    const incomeContainsContent = ['工资','零花钱']
     if (cateringContainsContent?.includes(content)){
         category = 'catering'
     }
     if(dayContainsContent?.includes(content)){
        category = 'day'
+    }
+    if(clothesContainsContent?.includes(content)){
+        category = 'clothes'
+    }
+    if(fruitsContainsContent?.includes(content)){
+        category = 'fruit'
+    }
+    if(incomeContainsContent?.includes(content)){
+        category = 'income'
     }
     return category;
 }
@@ -141,5 +154,17 @@ export const getCategory = (content:string) => {
 export const getCategoryForShow = (category:string)=>{
     if(category === 'catering') return '餐饮'
     if(category === 'day') return '日常'
+    if(category === 'clothes') return '衣物'
+    if(category === 'fruit') return '水果'
+    if(category === 'any') return '任意'
+    if(category === 'income') return '收入'
+    return '未知'
+}
+
+
+export const getAccountingTypeForShow = (accountingType:string)=>{
+    if(accountingType==='expense')return '支出'
+    if(accountingType==='income')return '收入'
+    if(accountingType==='any')return '任意'
     return '未知'
 }

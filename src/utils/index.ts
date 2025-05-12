@@ -192,35 +192,28 @@ export const analysisBill = (message: string) => {
   return resultBill;
 };
 
-const productMessage = (_message, _setMessages) => {
-  if (_message.trim()) {
-    const userMessage = {id: uuid.v4(), text: _message, sender: 'user'};
-    _setMessages(prevMessages => [...prevMessages, userMessage]);
-    const bill = analyseText(_message);
-    // 记录账单
-    const billMessage = {
-      id: uuid.v4(),
-      text: `您说的是: ${_message}`,
-      bill: bill,
-      sender: 'system',
-    };
-    _setMessages(prevMessages => [...prevMessages, billMessage]);
-  }
-};
-
 export const queryAndSetBills = (_database, setBills, setMessages) => {
   //     console.log('开始读取');
   getBillDetails(_database)
     .then(queryBills => {
-//                   console.log('读取成功', queryBills);
       setBills(queryBills); // 更新状态
       if (setMessages) {
         queryBills.forEach(item => {
-          productMessage(item.description, setMessages);
-        });
-      }
-    })
+            if (item.description.trim()) {
+              const userMessage = {id: uuid.v4(), text: item.description, sender: 'user'};
+              setMessages(prevMessages => [...prevMessages, userMessage]);
+              const billMessage = {
+                id: uuid.v4(),
+                text: `您说的是: ${item.description}`,
+                bill: item,
+                sender: 'system',
+              };
+              setMessages(prevMessages => [...prevMessages, billMessage]);
+            }
+          })
+        }
+      })
     .catch(error => {
-                  console.error('读取失败', error);
+          console.error('读取失败', error);
     });
 };

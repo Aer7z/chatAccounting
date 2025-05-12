@@ -36,9 +36,9 @@ const loadDict = (segmentit) => {
   segmentit.loadDict(pangu);
   segmentit.loadDict([panguExtend1, panguExtend2]);
   const verbDict =
-    '花了|0x1000|13840\n用了|0x1000|13840\n吃了|0x1000|13840\n洗车|0x1000|13840\n交了|0x1000|13840';
-  const dateDict = '那周|0x4000|4123\n这周|0x4000|4123\n';
-  const contentDict ='地三鲜|0x1048576|50000\n';
+    '花了|0x1000|13840\n用了|0x1000|13840\n吃了|0x1000|13840\n洗车|0x1000|13840\n交了|0x1000|13840\n拿到了|0x1000|13840\n拿了|0x1000|13840';
+  const dateDict = '那周|0x4000|4123\n这周|0x4000|4123\n后天|0x4000|800000\n这天|0x4000|800000\n';
+  const contentDict ='地三鲜|0x100000|500000\n';
   const timeDict =
     '星期一|0x400000|4123\n星期1|0x400000|4123\n星期二|0x400000|4124\n星期2|0x400000|4124\n星期三|0x400000|4125\n星期3|0x400000|4125\n星期四|0x400000|4126\n星期4|0x400000|4126\n星期五|0x400000|4127\n星期5|0x400000|4127\n星期六|0x400000|4128\n星期6|0x400000|4128\n星期日|0x400000|4129\n星期天|0x400000|4129\n星期7|0x400000|4129';
   const dict4Time =
@@ -60,6 +60,10 @@ export const analyseText = (inputText)=>{
       stripPunctuation: true,
       //       convertSynonym: true
     });
+    const containPersonPronoun = words?.filter((item)=>getPStr(item)==='65536')?.length>=1
+    if(!containPersonPronoun) {
+        words.unshift({p:65536,w:'我'})
+    }
     console.log(words);
     const resultOfHandleDateAndTime = handleDateAndTime(words);
     let tempStr = resultOfHandleDateAndTime?.resultStr;
@@ -327,8 +331,8 @@ const detectMoney = (initArray = []) => {
         if (i === cloneArray?.length) {
           resultMoneyStr = cloneArray?.[i]?.w?.toString();
         }
-        // 如果数量词后不是“助词”或者“名词”
-        if (!detectArray?.includes(getPStr(cloneArray[i + 1]))) {
+        // 如果数量词后不是“助词”或者“名词”或者这个数量词本身包含钱的单位
+        if (!detectArray?.includes(getPStr(cloneArray[i + 1]))||getWStr(cloneArray[i])?.includes('块')) {
           resultMoneyStr = cloneArray?.[i]?.w?.toString();
         }
       }

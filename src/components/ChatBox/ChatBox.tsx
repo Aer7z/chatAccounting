@@ -63,16 +63,16 @@ const ChatBox = ({database, currentTitle}) => {
 
   // 午饭花了20
 
-  const recodeBill = (billNeedToRecord: BillDetail) => {
+  const recodeBill = (billNeedToRecord: BillDetailType) => {
     setBills(preBills => [billNeedToRecord, ...preBills]);
   };
+
 
   const handleSend = () => {
     if (message.trim()) {
       const userMessage = {id: uuid.v4(), text: message, sender: 'user'};
       setMessages(prevMessages => [...prevMessages, userMessage]);
       const bill = analyseText(message);
-      console.log('const bill = analyseText(message)',bill)
       insertBillDetail(database, bill);
       recodeBill(bill);
       // 记录账单
@@ -86,24 +86,7 @@ const ChatBox = ({database, currentTitle}) => {
       setMessage(''); // 清空输入框
     }
   };
-  const productMessage = (_message, _setMessages) => {
-    if (_message.trim()) {
-      const userMessage = {id: uuid.v4(), text: _message, sender: 'user'};
-      _setMessages(prevMessages => [...prevMessages, userMessage]);
-      const bill = analysisBill(_message);
-      recodeBill(bill);
-      // 记录账单
-      const billMessage = {
-        id: uuid.v4(),
-        text: `您说的是: ${_message}`,
-        bill: bill,
-        sender: 'system',
-      };
-      _setMessages(prevMessages => [...prevMessages, billMessage]);
-    }
-    //         console.log('...执行')
-  };
-//
+
   const renderBill = ({item}) => {
     const {sender, bill} = item;
     const {
@@ -115,7 +98,6 @@ const ChatBox = ({database, currentTitle}) => {
       productSub,
       recordDate,
     } = bill || {};
-// console.log('bills',bill,item)
     if (item.sender === 'user') {
       return (
         <View style={[styles.messageContainer, styles.userMessage]}>

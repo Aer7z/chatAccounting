@@ -1,6 +1,6 @@
 import {zhDigitToArabic} from './number.ts'
 import {getTimeFormatStr,getDateFormatStr} from './get.ts'
-import {isNil,isNumber,isDate} from 'lodash'
+import {isNil,isNumber,isDate, omit} from 'lodash'
 
 // 如果十二、十这种单位十开头的词语，补充为一十二
 export const addUnitWithNumber = (chineseNumStr:string) => {
@@ -8,6 +8,11 @@ export const addUnitWithNumber = (chineseNumStr:string) => {
         return "一" + chineseNumStr; // 在“十”前加上“一”
     }
     return chineseNumStr; // 否则返回原字符串
+}
+
+export const convertDataBaseBillDataToFrontUse = (data) =>{
+    const cloneBill = cloneDeep(data)
+    return omit(cloneBill,['id'])
 }
 
 const isNumberOrNumberStr = (data) => !isNaN(Number(data))

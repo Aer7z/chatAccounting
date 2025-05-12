@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
-import {
-  PickDropdown,
-  ButtonImage,
-  Button as CustomButton  // 为了避免与 React Native 的 Button 组件冲突，重命名为 CustomButton
-} from "react-native-dropdown-select";
-import TriangleDown from './TriangleDown'; // 确保路径正确
 
 const SelectScreen = () => {
   const [selectedPerson, setSelectedPerson] = useState([]);
@@ -117,45 +111,16 @@ const SelectScreen = () => {
       <Text style={styles.title}>Select Options:</Text>
 
       <Text>Person:</Text>
-      <PickDropdown
-        options={personOptions}
-        multiple={true}
-        style={styles.dropdwon}
-        onSelect={onSelectPerson}
-        defaultValue={"请选择人员"}
-      />
+
 
       <Text>Category:</Text>
-      <PickDropdown
-        options={categoryOptions}
-        multiple={true}
-        style={styles.dropdwon}
-        onSelect={onSelectCategory}
-        defaultValue={"请选择账单类目"}
-      />
+
 
       <Text>Time Range:</Text>
-      <PickDropdown
-        options={timeRangeOptions}
-        multiple={true}
-        style={styles.dropdwon}
-        onSelect={onSelectTimeRange}
-        defaultValue={"请选择账单时间范围"}
-      />
+
 
       <Text>Type:</Text>
-      <PickDropdown
-        options={typeOptions}
-        multiple={true}
-        style={styles.dropdwon}
-        onSelect={onSelectType}
-        defaultValue={"请选择账单收支类型"}
-      />
 
-      <CustomButton style={styles.multipleBtn}
-        textStyle={styles.multipleBtnText}
-        onPress={handleSubmit}
-        text={"确定"}/>
     </View>
   );
 };

@@ -50,4 +50,8 @@ export const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
   },
+  multipleSelect: {
+      flex: 1,
+    width:'30%'
+  },
 });
