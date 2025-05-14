@@ -2,33 +2,21 @@ import React, {useState, useEffect, useRef} from 'react';
 import uuid from 'react-native-uuid';
 import {
   ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
   View,
-  useColorScheme,
   TextInput,
-  Button,
   FlatList,
   Image,
   TouchableOpacity,
 } from 'react-native';
-import {
-  Colors,
-  DebugInstructions,
-  //   Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import {styles} from './styles.ts';
 import {BillDetail} from '../../interface';
 import {Section} from '../index.ts';
 import {userInput} from '../../AccountingData/userInput.ts';
 import {
-  getDate,
   getWeekday,
-  analysisBill,
   queryAndSetBills,
-  handleWeekDayToChinese,
 } from '../../utils/index.ts';
 import {
   getFormatDate,
@@ -39,18 +27,15 @@ import {
 import {
   analyseText
 } from '../../utils/analyse.ts';
-import {insertBillDetail, getBillDetails, deleteAllRecords} from '../../utils/SQL/index.ts';
+import {insertBillDetail} from '../../utils/SQL/index.ts';
 
-const safePadding = '5%';
 
 const ChatBox = ({database, currentTitle}) => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
-  const [bill, setBill] = useState({});
   const [bills, setBills] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const flatListRef = useRef(null); // 用于引用 FlatList
-
 
   useEffect(() => {
     queryAndSetBills(database, setBills, setMessages);
@@ -138,10 +123,6 @@ const ChatBox = ({database, currentTitle}) => {
   const renderMessage = ({item}) => {
     return renderBill({item});
   };
-  const isDarkMode = useColorScheme() === 'dark';
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
 
 
 // useEffect(() => {
@@ -184,71 +165,5 @@ const ChatBox = ({database, currentTitle}) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  CheckBoxContainer: {
-    flex: 1,
-    padding: 10,
-    backgroundColor: '#fff',
-  },
-  messageList: {
-    flex: 1,
-    marginBottom: 10,
-  },
-  messageContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 5,
-    padding: 10,
-    borderRadius: 10,
-  },
-  userMessage: {
-    backgroundColor: '#e1ffc7', // 用户消息背景色
-    alignSelf: 'flex-end', // 右对齐
-  },
-  systemMessage: {
-    backgroundColor: '#f0f0f0', // 系统消息背景色
-    alignSelf: 'flex-start', // 左对齐
-  },
-  messageText: {
-    fontSize: 16,
-  },
-  avatar: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    marginRight: 10,
-  },
-  textContainer: {
-    flexDirection: 'column',
-  },
-
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  input: {
-    flex: 1,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
-    marginRight: 10,
-    flexDirection: 'row',
-  },
-  inputButton: {
-    width: '20%', // 设置按钮宽度为屏幕宽度的40%
-    padding: 10, // 内边距
-    backgroundColor: '#ADD8E6', // 按钮背景色
-    alignItems: 'center', // 内容居中
-    borderRadius: 5, // 圆角
-    marginLeft: 5,
-    marginRight: 5,
-  },
-  buttonText: {
-    color: '#fff', // 字体颜色
-    textAlign: 'center', // 文字居中
-  },
-});
 
 export default ChatBox;
