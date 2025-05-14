@@ -1,10 +1,18 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {View, Text, FlatList, TouchableOpacity} from 'react-native';
+import {View, Text, FlatList, TouchableOpacity,ScrollView} from 'react-native';
 import {LineChart} from 'react-native-chart-kit';
+import {
+  VictoryChart,
+  VictoryAxis,
+  VictoryLine,
+  VictoryTheme,
+  VictoryScatter
+} from "victory-native";
 import {queryAndSetBills, handleWeekDayToChinese} from '../../utils/index.ts';
 
 import {styles} from './style.ts';
 import {BillDetail} from '../../interface/index.ts';
+
 import {
   getFormatDate,
   getFormatTime,
@@ -13,6 +21,16 @@ import {
 } from '../../utils/get.ts';
 import {IncomeExpenseAnalyse} from './components/IncomeExpenseAnalyse/index.tsx'
 import {BillsClassifier} from './components/BillsClassifier/index.tsx'
+import {AnalyseLineChart} from './components/AnalyseLineChart/index.tsx'
+
+
+const returnLineRangeData = (priceDataArray)=>{
+    const min = Math.round(Math.min(...priceDataArray));
+    const max = Math.round(Math.max(...priceDataArray));
+    const billCount = priceDataArray?.length || 1
+    const range = Math.round((max-min)/billCount);
+    return [min,max,range]
+}
 
 
 const BillLineChart = ({database}) => {
@@ -87,65 +105,23 @@ const BillLineChart = ({database}) => {
   };
 
   return (
-    <View style={styles.AnalysisContainer}>
+    <ScrollView style={styles.AnalysisContainer}>
     <IncomeExpenseAnalyse filterBills={filterBills} dayCount={Object.keys(filterDailyBills)?.length||1}/>
     <BillsClassifier bills={bills} setFilterBills={setFilterBills}/>
-     {
-         chartData?.data?.length > 1 ?
-         <LineChart
-            data={{
-             labels: chartData.labels,
-             datasets: [
-               {
-                 data: chartData.data,
-               },
-             ],
-            }}
-            width={380}
-            height={180}
-            yAxisLabel=""
-            withDots={true}
-            withInnerLines={true}
-            chartConfig={{
-             backgroundColor: '#ffffff',
-             backgroundGradientFrom: '#ffffff',
-             backgroundGradientTo: '#ffffff',
-             decimalPlaces: 2,
-             color: (opacity = 1) => `rgba(0, 191, 255, ${opacity})`,
-             labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-             style: {
-               borderRadius: 16,
-             },
-             propsForDots: {
-               r: '0',
-             },
-            }}
-            bezier
-            style={{
-             marginVertical: 8,
-             borderRadius: 16,
-            }}
-            /> : <></>
-         }
-
-      <TouchableOpacity style={styles.sortButton} onPress={toggleSortOrder}>
-        <Text style={styles.buttonText}>{`点击切换排序到：${
-          sortOrder === 'asc' ? '降序' : '升序'
-        }`}</Text>
-      </TouchableOpacity>
-          <VictoryChart
-            theme={VictoryTheme.clean}
-          >
-            <VictoryLine />
-          </VictoryChart>
-      <FlatList
+        {Object.keys(filterDailyBills)?.length>1?<AnalyseLineChart dailyBills={filterDailyBills}/>:<></>}
+    <TouchableOpacity style={styles.sortButton} onPress={toggleSortOrder}>
+    <Text style={styles.buttonText}>
+        {`点击切换排序到：${sortOrder === 'asc' ? '降序' : '升序'}`}
+    </Text>
+    </TouchableOpacity>
+    <FlatList
         ref={flatListRef} // 设置 FlatList 的引用
         data={sortedBills}
         renderItem={renderItem}
         keyExtractor={item => item.id.toString()} // 假设每个账单都有唯一的 id
         style={styles.billList}
-      />
-    </View>
+    />
+    </ScrollView>
   );
 };
 
