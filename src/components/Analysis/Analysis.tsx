@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {View, Text, FlatList, TouchableOpacity,ScrollView} from 'react-native';
-import {LineChart} from 'react-native-chart-kit';
+import {Picker} from '@react-native-picker/picker';
 import {
   VictoryChart,
   VictoryAxis,
@@ -22,6 +22,8 @@ import {
 import {IncomeExpenseAnalyse} from './components/IncomeExpenseAnalyse/index.tsx'
 import {BillsClassifier} from './components/BillsClassifier/index.tsx'
 import {AnalyseLineChart} from './components/AnalyseLineChart/index.tsx'
+import {AnalysePieChart} from './components/AnalysePieChart/index.tsx'
+import {AnalyseChart} from './components/AnalyseChart/index.tsx'
 
 
 const returnLineRangeData = (priceDataArray)=>{
@@ -41,6 +43,8 @@ const BillLineChart = ({database}) => {
     labels: ['暂无数据', '暂无数据'],
     data: [0, 0],
   });
+  const chartList = ['pieChart','lineChart']
+  const [selectChart,setSelectChart] =useState('lineChart')
 
   const [sortOrder, setSortOrder] = useState('asc'); // 默认升序
   const flatListRef = useRef(null); // 用于引用 FlatList
@@ -70,7 +74,7 @@ const BillLineChart = ({database}) => {
 
   useEffect(() => {
     // 当组件挂载时，滑动到 FlatList 的底部
-    flatListRef.current?.scrollToEnd({animated: true});
+//     flatListRef.current?.scrollToEnd({animated: true});
   }, [bills]); // 每次 bills 更新时执行
 
   const toggleSortOrder = () => {
@@ -106,21 +110,29 @@ const BillLineChart = ({database}) => {
 
   return (
     <ScrollView style={styles.AnalysisContainer}>
-    <IncomeExpenseAnalyse filterBills={filterBills} dayCount={Object.keys(filterDailyBills)?.length||1}/>
-    <BillsClassifier bills={bills} setFilterBills={setFilterBills}/>
-        {Object.keys(filterDailyBills)?.length>1?<AnalyseLineChart dailyBills={filterDailyBills}/>:<></>}
-    <TouchableOpacity style={styles.sortButton} onPress={toggleSortOrder}>
-    <Text style={styles.buttonText}>
-        {`点击切换排序到：${sortOrder === 'asc' ? '降序' : '升序'}`}
-    </Text>
-    </TouchableOpacity>
-    <FlatList
-        ref={flatListRef} // 设置 FlatList 的引用
-        data={sortedBills}
-        renderItem={renderItem}
-        keyExtractor={item => item.id.toString()} // 假设每个账单都有唯一的 id
-        style={styles.billList}
-    />
+        <IncomeExpenseAnalyse filterBills={filterBills} dayCount={Object.keys(filterDailyBills)?.length||1}/>
+        <BillsClassifier bills={bills} setFilterBills={setFilterBills}/>
+        {Object.keys(filterDailyBills)?.length>1?<AnalyseChart dailyBills={filterDailyBills} selectChart={selectChart}/>:<></>}
+
+        <View style={styles.buttonList}>
+            <TouchableOpacity style={styles.sortButton} onPress={toggleSortOrder}>
+                <Text style={styles.switchBillsSortButton}>
+                    {`切换列表排序到: ${sortOrder === 'asc' ? '降序' : '升序'}`}
+                </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.sortButton} onPress={()=>setSelectChart(selectChart==='lineChart'?'pieChart':'lineChart')}>
+                <Text style={styles.switchBillsSortButton}>
+                    {`点击切换图表`}
+                </Text>
+            </TouchableOpacity>
+        </View>
+        <FlatList
+            ref={flatListRef} // 设置 FlatList 的引用
+            data={sortedBills}
+            renderItem={renderItem}
+            keyExtractor={item => item.id.toString()} // 假设每个账单都有唯一的 id
+            style={styles.billList}
+        />
     </ScrollView>
   );
 };

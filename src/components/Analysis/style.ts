@@ -38,20 +38,27 @@ export const styles = StyleSheet.create({
     marginTop: 20,
   },
   sortButton: {
-    width: '98%',
-    padding: 10,
-    backgroundColor: '#ADD8E6',
-    alignItems: 'center',
-    borderRadius: 5,
+    width: '45%', // 设置按钮宽度为屏幕宽度的40%
+    padding: 10, // 内边距
+    backgroundColor: '#ADD8E6', // 按钮背景色
+    alignItems: 'center', // 内容居中
+    borderRadius: 5, // 圆角
     marginLeft: 5,
     marginRight: 5,
   },
-  buttonText: {
+  switchBillsSortButton: {
     color: '#fff',
     textAlign: 'center',
   },
-  multipleSelect: {
-      flex: 1,
-    width:'30%'
+
+  switchChartButton:{
+    color: '#fff',
+    textAlign: 'center',
   },
+  buttonList:{
+    flex: 1,
+    flexDirection: 'row', // 设置为横向布局
+    justifyContent: 'space-around', // 水平间距
+    alignItems: 'center', // 垂直居中
+  }
 });

@@ -20,7 +20,7 @@ const returnLineRangeData = (priceDataArray)=>{
 }
 
 export const AnalyseLineChart = (props)=>{
-    const {dailyBills} = props
+    const {dailyBills,chartHeight} = props
 
     return (
     <>
@@ -62,6 +62,7 @@ export const AnalyseLineChart = (props)=>{
               }}
             />
           <VictoryLine
+            height={chartHeight}
             data={Object.entries(dailyBills).map(
               (d, i) => {
                   const [date,price] = d

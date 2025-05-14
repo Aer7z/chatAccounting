@@ -6,10 +6,9 @@ import {styles} from './styles.ts';
 import {
   getFormatDate,
   getCategoryForShow,
+  getWeekdayForShow,
   getAccountingTypeForShow
 } from '../../../../utils/get.ts';
-
-
 
 export const BillsClassifier = (props)=>{
     const { bills, setFilterBills } = props
@@ -47,12 +46,12 @@ export const BillsClassifier = (props)=>{
 
     return (
         <>
-            <View style={{ flexDirection: 'row', padding: 0 }}>
+            <View style={styles.firstRow}>
                 <Picker
                     selectedValue={selectedCategory}
                     onValueChange={updateSelectedCategory}
                     mode='dropdown'
-                    style={{ width:'25%', padding: 10 }}
+                    style={{ width:'25%'}}
                 >
                     {categoryList.map((item)=>(<Picker.Item key={item} label={getCategoryForShow(item)} value={item}/>))}
                 </Picker>
@@ -60,7 +59,7 @@ export const BillsClassifier = (props)=>{
                     selectedValue={selectedPerson}
                     onValueChange={updateSelectedPerson}
                     mode='dropdown'
-                    style={{ width:'25%', padding: 10 }}
+                    style={{ width:'25%'}}
                 >
                     {personList.map((item)=>(<Picker.Item key={item} label={item} value={item}/>))}
                 </Picker>
@@ -68,7 +67,7 @@ export const BillsClassifier = (props)=>{
                     selectedValue={selectedWeekday}
                     onValueChange={updateSelectedWeekday}
                     mode='dropdown'
-                    style={{ width:'29%', padding: 10 }}
+                    style={{ width:'29%'}}
                 >
                     {weekdayList.map((item)=>(<Picker.Item key={item} label={item} value={item}/>))}
                 </Picker>
@@ -76,17 +75,17 @@ export const BillsClassifier = (props)=>{
                     selectedValue={selectedAccountingType}
                     onValueChange={updateSelectedAccountingType}
                     mode='dropdown'
-                    style={{ width:'25%', padding: 10 }}
+                    style={{ width:'25%'}}
                 >
                      {accountingTypeList.map((item)=>(<Picker.Item key={item} label={getAccountingTypeForShow(item)} value={item}/>))}
                 </Picker>
             </View>
-            <View style={{ flexDirection: 'row', padding: 10 }}>
+            <View style={styles.secondRow}>
                 <Picker
                     selectedValue={selectedTimeEnd_1}
                     onValueChange={updateSelectedTimeEnd_1}
                     mode='dropdown'
-                    style={styles.multipleSelect}
+                    style={styles.secondRowMultipleSelect}
                 >
                     {dateList.map((item)=>(<Picker.Item key={item} label={item} value={item}/>))}
                 </Picker>
@@ -94,7 +93,7 @@ export const BillsClassifier = (props)=>{
                     selectedValue={selectedTimeEnd_2}
                     onValueChange={updateSelectedTimeEnd_2}
                     mode='dropdown'
-                    style={styles.multipleSelect}
+                    style={styles.secondRowMultipleSelect}
                 >
                     {dateList.map((item)=>(<Picker.Item key={item} label={item} value={item}/>))}
                 </Picker>
