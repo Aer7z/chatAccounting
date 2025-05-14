@@ -3,6 +3,8 @@ import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native
 import { LineChart, BarChart } from 'react-native-chart-kit';
 import {AnalyseLineChart} from '../AnalyseLineChart/index.tsx'
 import {AnalysePieChart} from '../AnalysePieChart/index.tsx'
+import {AnalyseBarChart} from '../AnalyseBarChart/index.tsx'
+
 
 export const AnalyseChart = (props) => {
   const {dailyBills,selectChart} = props
@@ -12,6 +14,9 @@ export const AnalyseChart = (props) => {
       },
       {
           type:'pieChart',node: <AnalysePieChart chartHeight={300} dailyBills={dailyBills}/>
+      },
+      {
+          type:'barChart',node: <AnalyseBarChart chartHeight={300} dailyBills={dailyBills}/>
       }
   ]
 

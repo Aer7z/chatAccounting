@@ -21,8 +21,7 @@ import {
 } from '../../utils/get.ts';
 import {IncomeExpenseAnalyse} from './components/IncomeExpenseAnalyse/index.tsx'
 import {BillsClassifier} from './components/BillsClassifier/index.tsx'
-import {AnalyseLineChart} from './components/AnalyseLineChart/index.tsx'
-import {AnalysePieChart} from './components/AnalysePieChart/index.tsx'
+import {AnalyseBarChart} from './components/AnalyseBarChart/index.tsx'
 import {AnalyseChart} from './components/AnalyseChart/index.tsx'
 
 
@@ -43,7 +42,9 @@ const BillLineChart = ({database}) => {
     labels: ['暂无数据', '暂无数据'],
     data: [0, 0],
   });
-  const chartList = ['pieChart','lineChart']
+  const chartList = ['pieChart','lineChart','barChart']
+  const [selectChartIndex,setSelectChartIndex] =useState(0)
+
   const [selectChart,setSelectChart] =useState('lineChart')
 
   const [sortOrder, setSortOrder] = useState('asc'); // 默认升序
@@ -112,15 +113,14 @@ const BillLineChart = ({database}) => {
     <ScrollView style={styles.AnalysisContainer}>
         <IncomeExpenseAnalyse filterBills={filterBills} dayCount={Object.keys(filterDailyBills)?.length||1}/>
         <BillsClassifier bills={bills} setFilterBills={setFilterBills}/>
-        {Object.keys(filterDailyBills)?.length>1?<AnalyseChart dailyBills={filterDailyBills} selectChart={selectChart}/>:<></>}
-
+        {Object.keys(filterDailyBills)?.length>1?<AnalyseChart dailyBills={filterDailyBills} selectChart={chartList[selectChartIndex]}/>:<></>}
         <View style={styles.buttonList}>
             <TouchableOpacity style={styles.sortButton} onPress={toggleSortOrder}>
                 <Text style={styles.switchBillsSortButton}>
                     {`切换列表排序到: ${sortOrder === 'asc' ? '降序' : '升序'}`}
                 </Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.sortButton} onPress={()=>setSelectChart(selectChart==='lineChart'?'pieChart':'lineChart')}>
+            <TouchableOpacity style={styles.sortButton} onPress={()=>setSelectChartIndex((selectChartIndex+1+chartList?.length||1)%chartList?.length)}>
                 <Text style={styles.switchBillsSortButton}>
                     {`点击切换图表`}
                 </Text>
