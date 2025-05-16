@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS BillDetails (
     accountingType TEXT NOT NULL CHECK (accountingType IN ('income', 'expense')),  -- 收/支类型
     category TEXT NOT NULL,  -- 账单分类
     content TEXT NOT NULL,  -- 内容，即购买项、收入项
-    description TEXT NOT NULL CHECK (LENGTH(description) <= 32),  -- 账单描述
+    description TEXT NOT NULL CHECK (LENGTH(description) <= 64),  -- 账单描述
     productSub TEXT NOT NULL CHECK (LENGTH(productSub) <= 16),  -- 账单的生产主体
     recordDate TEXT NOT NULL,  -- 产生时间，包含日期和具体时间
     totalPrice REAL NOT NULL  -- 价格

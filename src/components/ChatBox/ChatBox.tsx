@@ -121,19 +121,19 @@ const ChatBox = ({database, currentTitle}) => {
     return renderBill({item});
   };
 
-  // useEffect(() => {
-  //   userInput.forEach((singleMessage)=>{
-  //       const userMessage = { id: uuid.v4(), text: singleMessage, sender: 'user' };
-  //       setMessages((prevMessages) => [...prevMessages, userMessage]);
-  //       const bill = analyseText(singleMessage);
-  //         console.log('bill',bill)
-  //       recodeBill(bill);
-  //       insertBillDetail(database,bill)
-  //       // 记录账单
-  //       const billMessage = { id: uuid.v4(), text: `您说的是: ${singleMessage}`,bill: bill, sender: 'system' };
-  //       setMessages((prevMessages) => [...prevMessages, billMessage]);
-  //   });
-  // }, []);
+//   useEffect(() => {
+//     userInput.forEach((singleMessage)=>{
+//         const userMessage = { id: uuid.v4(), text: singleMessage, sender: 'user' };
+//         setMessages((prevMessages) => [...prevMessages, userMessage]);
+//         const bill = analyseText(singleMessage);
+//           console.log('bill',bill)
+//         recodeBill(bill);
+//         insertBillDetail(database,bill)
+//         // 记录账单
+//         const billMessage = { id: uuid.v4(), text: `您说的是: ${singleMessage}`,bill: bill, sender: 'system' };
+//         setMessages((prevMessages) => [...prevMessages, billMessage]);
+//     });
+//   }, []);
 
   return (
     <View style={styles.CheckBoxContainer}>

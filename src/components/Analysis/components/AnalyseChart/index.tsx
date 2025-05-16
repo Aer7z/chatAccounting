@@ -22,7 +22,7 @@ export const AnalyseChart = (props) => {
 
   return (
     <View style={styles.container}>
-    {chartList.map((item)=>item.type===selectChart?item.node:<></>)}
+        {chartList.find((item)=>item.type===selectChart)?.node||<></>}
     </View>
   );
 };
